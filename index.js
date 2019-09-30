@@ -1,6 +1,8 @@
 require("dotenv").config();
 
 const { Builder, By, Key, until } = require("selenium-webdriver");
+const firefox = require('selenium-webdriver/firefox');
+
 const { LOGIN: login, PASSWORD: password } = process.env;
 
 const required = ["LOGIN", "PASSWORD"];
@@ -41,8 +43,16 @@ async function setToDay() {
     });
 }
 
+const screen = {
+  width: 1920,
+  height: 1080
+};
+
 (async function example() {
-  driver = await new Builder().forBrowser("firefox").build();
+  driver = await new Builder()
+    .forBrowser("firefox")
+    .setFirefoxOptions(new firefox.Options().headless().windowSize(screen))
+    .build();
 
   try {
     await driver.get(
