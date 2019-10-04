@@ -1,7 +1,6 @@
 require("dotenv").config();
 
-const { Builder, By, Key, until } = require("selenium-webdriver");
-const firefox = require('selenium-webdriver/firefox');
+const puppeteer = require("puppeteer");
 
 const { LOGIN: login, PASSWORD: password } = process.env;
 
@@ -13,102 +12,64 @@ if (!login || !password) {
   process.exit();
 }
 
-const messenger = require("./telegram_adapter");
-
-let driver;
-
-async function setToDay() {
-  await driver
-    .wait(
-      until.elementLocated(
-        By.id("ctl01_MasterContentPlaceHolder1_cbPeriod_Input")
-      ),
-      5 * 1000
-    )
-    .then(el => {
-      el.click();
-    });
-  await driver.sleep(5000);
-  await driver
-    .wait(
-      until.elementLocated(
-        By.css(
-          "#ctl01_MasterContentPlaceHolder1_cbPeriod_DropDown li:first-child"
-        )
-      ),
-      5 * 1000
-    )
-    .then(el => {
-      el.click();
-    });
+function delay(time) {
+  return new Promise(function(resolve) {
+    setTimeout(resolve, time);
+  });
 }
 
-const screen = {
-  width: 1920,
-  height: 1080
-};
+const messenger = require("./telegram_adapter");
 
-(async function example() {
-  driver = await new Builder()
-    .forBrowser("firefox")
-    .setFirefoxOptions(new firefox.Options().headless().windowSize(screen))
-    .build();
-
+(async () => {
+  const browser = await puppeteer.launch({ headless: false });
+  const page = await browser.newPage();
   try {
-    await driver.get(
+    await page.goto(
       "https://provident.meterconnex.com/secure/Dashboard/Dashboard.aspx"
     );
-    await driver
-      .wait(
-        until.elementLocated(
-          By.id("ctl01_MasterContentPlaceHolder1_txtUserID")
-        ),
-        5 * 1000
-      )
-      .then(el => {
-        return el.sendKeys(login);
+    await page
+      .waitForSelector("#ctl01_MasterContentPlaceHolder1_txtUserID")
+      .then(async () => {
+        await page.focus("#ctl01_MasterContentPlaceHolder1_txtUserID");
+        await page.keyboard.type(login);
       });
-    await driver
-      .wait(
-        until.elementLocated(
-          By.id("ctl01_MasterContentPlaceHolder1_txtPassword")
-        ),
-        5 * 1000
-      )
+    await page
+      .waitForSelector("#ctl01_MasterContentPlaceHolder1_txtPassword")
+      .then(async () => {
+        await page.focus("#ctl01_MasterContentPlaceHolder1_txtPassword");
+        await page.keyboard.type(password);
+        await page.keyboard.press("Enter");
+      });
+    await delay(3000);
+    await page
+      .waitForSelector("#ctl01_MasterContentPlaceHolder1_cbPeriod_Input")
       .then(async el => {
-        await el.sendKeys(password);
-        await el.sendKeys(Key.ENTER);
+        el.click();
+        await delay(3000);
+        await page.click(
+          "#ctl01_MasterContentPlaceHolder1_cbPeriod_DropDown li:first-child"
+        );
       });
 
-    await driver.sleep(5000);
-
-    await setToDay();
-
-    await driver.sleep(5000);
-
-    await driver
-      .wait(
-        until.elementLocated(
-          By.id("ctl01_MasterContentPlaceHolder1_lblChangeNumber")
-        ),
-        5 * 1000
-      )
+    await delay(3000);
+    await page
+      .waitForSelector("#ctl01_MasterContentPlaceHolder1_lblChangeNumber")
       .then(async el => {
-        const changeType = await driver
-          .findElement(
-            By.id("ctl01_MasterContentPlaceHolder1_lblChangeDirection")
-          )
-          .getText();
-        const percentage = await el.getText();
+        const percentage = await page.evaluate(
+          element => element.textContent,
+          el
+        );
+        const changeTypeElm = await page.$(
+          "#ctl01_MasterContentPlaceHolder1_lblChangeDirection"
+        );
+        const changeType = await page.evaluate(
+          element => element.textContent,
+          changeTypeElm
+        );
         messenger.sendMessage(
           `Compared to yesterday, electricity has ${changeType.toLowerCase()} ${percentage}`
         );
       });
-  } catch (e) {
-    messenger.sendMessage(
-      `Compared to yesterday, electricity has ${changeType.toLowerCase()} ${percentage}`
-    );
-  } finally {
-    await driver.quit();
-  }
+    browser.close();
+  } catch (e) {}
 })();
