@@ -67,7 +67,7 @@ const messenger = require("./telegram_adapter");
           changeTypeElm
         );
         messenger.sendMessage(
-          `Compared to yesterday, electricity has ${changeType.toLowerCase()} ${percentage}`
+          `Yesterday electricity has ${changeType.toLowerCase()} ${percentage} compared to the day before.`
         );
       });
     browser.close();
