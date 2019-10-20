@@ -2,7 +2,11 @@ require("dotenv").config();
 
 const puppeteer = require("puppeteer");
 
-const { LOGIN: login, PASSWORD: password, CHROME_PATH: chromePath } = process.env;
+const {
+  LOGIN: login,
+  PASSWORD: password,
+  CHROME_PATH: chromePath
+} = process.env;
 
 const required = ["LOGIN", "PASSWORD"];
 if (!login || !password) {
@@ -21,7 +25,9 @@ function delay(time) {
 const messenger = require("./telegram_adapter");
 
 (async () => {
-  const browser = await puppeteer.launch({ executablePath: chromePath || 'chrome' });
+  const browser = await puppeteer.launch({
+    executablePath: chromePath || "chrome",
+  });
   const page = await browser.newPage();
   try {
     await page.goto(
