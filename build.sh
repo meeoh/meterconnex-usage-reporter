@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build -t meterconnex-repporter .
+docker build -t meterconnex-reporter .
