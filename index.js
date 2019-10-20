@@ -25,9 +25,7 @@ function delay(time) {
 const messenger = require("./telegram_adapter");
 
 (async () => {
-  const browser = await puppeteer.launch({
-    executablePath: chromePath || "chrome",
-  });
+  const browser = await puppeteer.launch();
   const page = await browser.newPage();
   try {
     await page.goto(
