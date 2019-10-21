@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
 
 const {
   LOGIN: login,
@@ -25,7 +25,7 @@ function delay(time) {
 const messenger = require("./telegram_adapter");
 
 (async () => {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({executablePath: '/usr/bin/chromium-browser'});
   const page = await browser.newPage();
   try {
     await page.goto(
