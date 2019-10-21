@@ -5,7 +5,8 @@ const puppeteer = require("puppeteer-core");
 const {
   LOGIN: login,
   PASSWORD: password,
-  CHROME_PATH: chromePath
+  CHROME_PATH: chromePath,
+  RASPBIAN,
 } = process.env;
 
 const required = ["LOGIN", "PASSWORD"];
@@ -25,7 +26,7 @@ function delay(time) {
 const messenger = require("./telegram_adapter");
 
 (async () => {
-  const browser = await puppeteer.launch({executablePath: '/usr/bin/chromium-browser'});
+  const browser = RASPBIAN ? await puppeteer.launch({executablePath: '/usr/bin/chromium-browser'}) : await puppeteer.launch();
   const page = await browser.newPage();
   try {
     await page.goto(
