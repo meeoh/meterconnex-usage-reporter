@@ -18,7 +18,7 @@ CHAT_ID=
 
 ## Running 
 
-Then run `npm i` or `./build.sh` for a dockerized setup. Create a cronjob to either run `node index.js` or `docker run` periodically
+Then run `npm i` or `./build.sh` for a dockerized setup. Create a cronjob to either run `node index.js` or the `run.sh` script periodically
 
 
 ## Running on raspbian (no docker)
