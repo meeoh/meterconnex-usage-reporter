@@ -16,3 +16,14 @@ CHAT_ID=
 
 ```
 Create a cronjob to either run `node index.js` or `docker run` periodically
+
+
+## Running on raspbian (no docker)
+
+Set `RASPBIAN=true` in the `.env` file and run the following
+
+```
+sudo apt install chromium-browser chromium-codecs-ffmpeg
+npm i
+```
+Then simply run `node index.js`
