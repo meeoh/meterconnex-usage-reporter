@@ -27,3 +27,5 @@ sudo apt install chromium-browser chromium-codecs-ffmpeg
 npm i
 ```
 Then simply run `node index.js`
+
+<img src="https://i.imgur.com/YU2m7e0.png" />
