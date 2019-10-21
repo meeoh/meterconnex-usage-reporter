@@ -74,6 +74,6 @@ const messenger = require("./telegram_adapter");
           `Yesterday electricity has ${changeType.toLowerCase()} ${percentage} compared to the day before.`
         );
       });
-    browser.close();
+    await browser.close();
   } catch (e) {}
 })();
