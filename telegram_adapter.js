@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({path: `${__dirname}/.env`});
 const { TELEGRAM_TOKEN: telegramToken, CHAT_ID: chatId } = process.env;
 const required = ["TELEGRAM_TOKEN", "CHAT_ID"];
 if (!telegramToken || !chatId) {
